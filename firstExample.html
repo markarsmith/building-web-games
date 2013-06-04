@@ -30,9 +30,18 @@
             context.lineWidth = 15;
 
             context.beginPath();
-            context.arc(175, 175, 50, 10, Math.PI*2, true);
+            context.arc(175, 175, 50, 10, Math.PI*2, true);//(x, y ,radius, start-angle, end-angle, anticlockwise);
             context.closePath();
+            context.fillStyle = 'rgba(100, 10, 8, 0.5)';
+            context.fill();
+            context.stroke();
 
+            context.beginPath();
+            context.moveTo(0,0);
+            context.lineTo(10,300);
+            context.closePath();
+            context.strokeStyle = 'grey';
+            context.lineWidth = 10;
             context.stroke();
         };
     </script>
