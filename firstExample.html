@@ -26,6 +26,16 @@
 
             context.fillRect(x, y, w, h);
 
+            context.beginPath();
+            context.moveTo(0,0);
+            context.lineTo(10,207);
+            context.lineTo(208,207);
+            context.lineTo(206,5);
+            context.closePath();
+            context.strokeStyle = 'grey';
+            context.lineWidth = 10;
+            context.stroke();
+
             context.strokeStyle = 'magenta';
             context.lineWidth = 15;
 
@@ -36,14 +46,35 @@
             context.fill();
             context.stroke();
 
-            context.beginPath();
-            context.moveTo(0,0);
-            context.lineTo(10,300);
-            context.closePath();
-            context.strokeStyle = 'grey';
-            context.lineWidth = 10;
-            context.stroke();
+            drawAStar(50, context);
         };
+
+        function drawAStar(length, ctx) {
+            ctx.beginPath();
+            ctx.strokeStyle = 'grey';
+            ctx.fillStyle = 'yellow';
+            ctx.lineWidth = 14;
+
+            ctx.translate(350, 150);
+
+            ctx.rotate((Math.PI * 1 / 10));
+
+            for (var i = 5; i--;) {
+                ctx.lineTo(0, length);
+                ctx.translate(0, length);
+                ctx.rotate((Math.PI * 2 / 10));
+                ctx.lineTo(0, -length);
+                ctx.translate(0, -length);
+                ctx.rotate(-(Math.PI * 6 / 10));
+            }
+            ctx.lineTo(0, length);
+            ctx.closePath();
+
+            ctx.fill();
+            ctx.stroke();
+        };
+
+
     </script>
 
 </head>
