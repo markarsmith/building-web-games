@@ -21,15 +21,32 @@
 
     var frame = 0;
 
-    setInterval(function() {
+
+    var start = Date.now();
+
+    function clearCanvas(){
         ctx.canvas.width = ctx.canvas.width;
+    }
+
+    function drawStuff(){
         frame++;
         var xoffset = Math.sin(frame/7) * w/3;
         var yoffset = Math.sin(frame/8) * h/3;
 
         ctx.fillStyle = 'red';
         ctx.fillRect(w/2-25 + xoffset, h/2-25 + yoffset, 50, 50);
-    }, 1000/30);//30 frames per second
+    }
+
+    function drawFrame(){
+        clearCanvas();
+        drawStuff();
+        requestAnimationFrame(drawFrame);
+    }
+
+    drawFrame();
+
+
+
 
 </script>
 
