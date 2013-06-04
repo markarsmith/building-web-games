@@ -13,6 +13,7 @@
             canvas.height = 500;
 
             var context = canvas.getContext('2d');
+            context.globalCompositeOperation = 'xor';
 
             var gradient = context.createLinearGradient(0, 0, 500, 500);
 
@@ -46,7 +47,8 @@
             context.fill();
             context.stroke();
 
-            drawAStar(50, context);
+            //drawAStar(50, context);
+            var mark = new drawAStar(50, context);
         };
 
         function drawAStar(length, ctx) {

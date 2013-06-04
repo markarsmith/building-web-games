@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+
+    <script>
+        function initCanvas(){
+
+            var canvas = document.getElementById('c');
+            canvas.style.width = '500px';
+            canvas.style.height = '500px';
+
+            canvas.width = 500;
+            canvas.height = 500;
+
+            var context = canvas.getContext('2d');
+
+            context.imageSmoothingEnabled = true;
+
+            context.fillStyle = 'rgba(2,100,100,100)';
+            var x = 10, y = 10, w = 20, h = 20;
+            context.fillRect(x, y, w, h);
+
+            var img = new Image();
+            img.onload = function() {
+                context.drawImage(img, 50, 100, 216, 134);
+            }
+            img.src = 'resources/images/gracieFly.jpg';
+
+        };
+
+    </script>
+
+</head>
+
+<body onload = initCanvas()>
+
+<canvas id='c'></canvas>
+
+</body>
+
+</html>
