@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+
+    <script>
+        function initCanvas(){
+            var canvas = document.getElementById('c');
+            canvas.style.width = '500px';
+            canvas.style.height = '500px';
+
+            canvas.width = 500;
+            canvas.height = 500;
+
+            var context = canvas.getContext('2d');
+
+            context.fillStyle = 'red';
+
+            var x = 10, y = 10, w = 200, h = 200;
+
+            context.fillRect(x, y, w, h);
+        };
+    </script>
+
+</head>
+
+<body onload = initCanvas()>
+
+    <canvas id='c'></canvas>
+
+</body>
+
+</html>
