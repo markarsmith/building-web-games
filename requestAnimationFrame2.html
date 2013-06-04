@@ -13,6 +13,7 @@
 
     var canvas = document.getElementById('canvas');
     var ctx = canvas.getContext('2d');
+    ctx.globalAlpha = 0.5;
 
     canvas.width = 500;
     canvas.height = 500;
@@ -38,14 +39,14 @@
         var xoffset = Math.sin(frame/7) * w/3;
         var yoffset = Math.sin(frame/8) * h/3;
 
-        //ctx.drawImage(ctx.canvas, 0, 0 w, h, -10, -10, w+20, h+20);
-        ctx.fillStyle = 'red';//'rgba(0, 255, 255, 0.05)';
-        //ctx.fillRect(w/2-25 + xoffset, h/2-25 + yoffset, 50, 50);
+        ctx.fillStyle = 'rgba(0, 255, 255, 0.9)';
 
+        ctx.fillRect(0, 0, 50, 50);
         ctx.save();
+        ctx.fillRect(-25 + xoffset, -25 + yoffset, 50, 50);
         ctx.translate(w/2, h/2);
         ctx.rotate(frame*5/360*Math.PI*2)
-        ctx.fillRect(-25 + xoffset, -25 + yoffset, 50, 50)
+        ctx.fillRect(-25 + xoffset, -25 + yoffset, 50, 50);
         ctx.restore();
     }
 
@@ -61,6 +62,8 @@
 
 
 </script>
+
+<a href="#" onclick="canvas.toDataURL('image/jpg', 75)">save me</a>
 
 </body>
 </html>
