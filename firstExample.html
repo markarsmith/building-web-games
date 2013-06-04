@@ -14,11 +14,26 @@
 
             var context = canvas.getContext('2d');
 
-            context.fillStyle = 'red';
+            var gradient = context.createLinearGradient(0, 0, 500, 500);
+
+            gradient.addColorStop(0, 'blue');
+            gradient.addColorStop(0.5, 'red');
+            gradient.addColorStop(1, 'green');
+
+            context.fillStyle = gradient;//'rgba(2,100,100,100)';//'red';
 
             var x = 10, y = 10, w = 200, h = 200;
 
             context.fillRect(x, y, w, h);
+
+            context.strokeStyle = 'magenta';
+            context.lineWidth = 15;
+
+            context.beginPath();
+            context.arc(175, 175, 50, 10, Math.PI*2, true);
+            context.closePath();
+
+            context.stroke();
         };
     </script>
 
