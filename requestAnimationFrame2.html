@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+</head>
+<body>
+
+<canvas id="canvas">
+    ... non-canvas fallback
+</canvas>
+
+<script>
+
+    var canvas = document.getElementById('canvas');
+    var ctx = canvas.getContext('2d');
+
+    canvas.width = 500;
+    canvas.height = 500;
+
+    var w = canvas.width, h = canvas.height;
+
+    var frame = 0;
+
+
+    var start = Date.now();
+
+    function clearCanvas(){
+        ctx.canvas.width = ctx.canvas.width;
+    }
+
+    function drawStuff(){
+        frame++;
+
+        ctx.drawImage(ctx.canvas, 0, 0, w, h, -10, -10, w+20, h+20);
+        ctx.fillStyle = 'rgba(0, 255, 255, 0.05)';
+        ctx.fillRect(0,0,w,h);
+
+        var xoffset = Math.sin(frame/7) * w/3;
+        var yoffset = Math.sin(frame/8) * h/3;
+
+        //ctx.drawImage(ctx.canvas, 0, 0 w, h, -10, -10, w+20, h+20);
+        ctx.fillStyle = 'red';//'rgba(0, 255, 255, 0.05)';
+        //ctx.fillRect(w/2-25 + xoffset, h/2-25 + yoffset, 50, 50);
+
+        ctx.save();
+        ctx.translate(w/2, h/2);
+        ctx.rotate(frame*5/360*Math.PI*2)
+        ctx.fillRect(-25 + xoffset, -25 + yoffset, 50, 50)
+        ctx.restore();
+    }
+
+    function drawFrame(){
+        clearCanvas();
+        drawStuff();
+        requestAnimationFrame(drawFrame);
+    }
+
+    drawFrame();
+
+
+
+
+</script>
+
+</body>
+</html>
