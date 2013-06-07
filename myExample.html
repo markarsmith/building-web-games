@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+
+    <style>
+
+        .regularCanvas{
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+    </style>
+</head>
+<body>
+
+<canvas id="bgCanvas" class="regularCanvas"></canvas>
+<canvas id="spriteCanvas" class="regularCanvas">
+
+</canvas>
+
+
+
+<script>
+
+    var spriteCanvas = document.getElementById('spriteCanvas');
+    var ctx = spriteCanvas.getContext('2d');
+
+    var bgCanvas = document.getElementById('bgCanvas');
+    var bgctx = bgCanvas.getContext('2d');
+
+    spriteCanvas.width = bgCanvas.width = window.innerWidth;
+    spriteCanvas.height = bgCanvas.height = window.innerHeight;
+    bgctx.fillStyle = 'blue';
+    bgctx.fillRect(0,0,window.innerWidth,window.innerHeight);
+
+
+    var n = 1;
+    var xPos = 50;
+
+    var w = bgCanvas.width, h = bgCanvas.height;
+
+    var start = Date.now();
+
+    function clearCanvas(){
+        ctx.canvas.width = ctx.canvas.width;
+    }
+
+    function drawStuff(){
+        ctx.fillStyle = 'red';
+        ctx.translate((xPos+=2)%bgCanvas.width, 50);
+        ctx.rotate((Math.PI/32)*n);
+        ctx.fillRect(-25, -25, 50, 50);
+
+        n += 1;
+    }
+
+    function drawFrame(){
+        clearCanvas();
+        drawStuff();
+        requestAnimationFrame(drawFrame);
+    }
+
+    drawFrame();
+
+
+</script>
+
+</body>
+</html>
