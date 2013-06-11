@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<meta charset=utf8>
+<title>Physics</title>
+<body style="margin:0">
+<script>
+    var canvas = document.createElement('canvas')
+    canvas.width = innerWidth
+    canvas.height = innerHeight
+    document.body.appendChild(canvas)
+
+    var worldsize = 100
+
+    var ctx = canvas.getContext('2d')
+    function resetCanvas() {
+        canvas.width = canvas.width
+        ctx.translate(canvas.width/2, canvas.height/2)
+        var scale = Math.min(canvas.width/worldsize, canvas.height/worldsize)
+        ctx.scale(scale, scale)
+        ctx.fillStyle = 'blue'
+    }
+
+    var objects = [];
+    for(var i=0; i < 100; i++) {
+        objects.push({
+            origin: {
+                x: (Math.random()-0.5) * worldsize,
+                y: (Math.random()-0.5) * worldsize,
+            },
+            velocity: {
+                x: (Math.random()-0.5) * worldsize/100,
+                y: (Math.random()-0.5) * worldsize/100,
+            },
+            radius: worldsize/100,
+            touching: false
+        })
+    }
+
+    function drawCircle(x,y,r,c) {
+        ctx.beginPath()
+        ctx.arc(x,y,r,0,Math.PI*2,false)
+        ctx.fillStyle = 'rgb('+(c*2)+',0,'+(255-c*2)+')'
+        ctx.fill()
+    }
+
+    setInterval(function(){
+        resetCanvas()
+
+        for(var i=0; i < objects.length; i++) {
+            var o = objects[i]
+
+            //o.velocity.y += 0.1;
+
+            o.origin.x += o.velocity.x;
+            o.origin.y += o.velocity.y;
+
+            o.velocity.x *= Math.random()*2;//0.98
+            o.velocity.y *= Math.random()*2;//0.98
+
+
+            if (o.origin.y < -worldsize/2 || o.origin.y > worldsize/2) o.velocity.y = -o.velocity.y;
+
+            if (o.origin.x < -worldsize/2 || o.origin.x > worldsize/2) o.velocity.x = -o.velocity.x;
+
+            drawCircle(o.origin.x, o.origin.y, worldsize/100, i)
+        }
+
+//         var chosen = Math.random()*objects.length|0
+//         objects[chosen].velocity.x = (Math.random()-0.5) * worldsize/100;
+//         objects[chosen].velocity.y = (Math.random()-0.5) * worldsize/100;
+
+    }, 1000/30)
+
+</script>

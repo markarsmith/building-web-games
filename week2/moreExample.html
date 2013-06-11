@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<meta charset=utf8>
+<title>Physics</title>
+<body style="margin:0">
+<script>
+    var canvas = document.createElement('canvas')
+    canvas.width = innerWidth
+    canvas.height = innerHeight
+    document.body.appendChild(canvas)
+
+    var worldsize = 100
+
+    var ctx = canvas.getContext('2d')
+    function resetCanvas() {
+        canvas.width = canvas.width
+        ctx.translate(canvas.width/2, canvas.height/2)
+        var scale = Math.min(canvas.width/worldsize, canvas.height/worldsize)
+        ctx.scale(scale, scale)
+        ctx.fillStyle = 'blue'
+    }
+
+    var objects = []
+    for(var i=0; i < 100; i++) {
+        objects.push({
+            origin: {
+                x: (Math.random()-0.5) * worldsize,
+                y: (Math.random()-0.5) * worldsize,
+            },
+            velocity: {
+                x: (Math.random()-0.5) * worldsize/200,
+                y: (Math.random()-0.5) * worldsize/200,
+            },
+            radius: worldsize/300 + Math.random() * worldsize/50,
+            touching: false
+        })
+    }
+
+    function drawCircle(x,y,r,c) {
+        ctx.beginPath()
+        ctx.arc(x,y,r,0,Math.PI*2,false)
+        ctx.fillStyle = 'rgb('+(c*2)+',0,'+(255-c*2)+')'
+        ctx.fill()
+    }
+
+
+    setInterval(function(){
+        for(var i=0; i < objects.length; i++) {
+            var o = objects[i]
+            o.touching = false
+
+            //o.velocity.y += 0.05;
+
+            o.origin.x += o.velocity.x;
+            o.origin.y += o.velocity.y;
+
+            if (o.origin.y > worldsize/2) {
+                o.origin.y = worldsize/2
+                o.velocity.y = -o.velocity.y*0.8;
+            }
+            if (o.origin.y < -worldsize/2) {
+                o.origin.y = -worldsize/2
+                o.velocity.y = -o.velocity.y*0.8;
+            }
+            if (o.origin.x > worldsize/2) {
+                o.origin.x = worldsize/2
+                o.velocity.x = -o.velocity.x*0.8;
+            }
+            if (o.origin.x < -worldsize/2) {
+                o.origin.x = -worldsize/2
+                o.velocity.x = -o.velocity.x*0.8;
+            }
+        }
+
+        for(var i=0; i < objects.length; i++) {
+            var o1 = objects[i]
+            for(var j=i+1; j < objects.length; j++) {
+                var o2 = objects[j]
+                var Δx = o1.origin.x - o2.origin.x
+                var Δy = o1.origin.y - o2.origin.y
+                var dist = Δx*Δx + Δy*Δy
+                var radii = o1.radius + o2.radius
+
+                if (o1.touching || o2.touching ||
+                        dist > radii*radii) continue;
+
+                o1.touching = o2.touching = true
+
+                if(o1.radius > o2.radius){
+                    o1.radius += (o2.radius*0.3)
+                    o2.radius = 0;
+                    o1.touching = o2.touching = false;
+                }
+                else{
+                    o2.radius += (o1.radius*0.3)
+                    o1.radius = 0;
+                    o1.touching = o2.touching = false;
+                }
+
+//                o1.radius /= 2
+//                o2.radius /= 2
+//
+//                var v = o1.velocity
+//                o1.velocity = o2.velocity
+//                o2.velocity = v
+//
+//                o1.velocity.x = o2.velocity.x = (o1.velocity.x+o2.velocity.x)/2
+//                o1.velocity.y = o2.velocity.y = (o1.velocity.y+o2.velocity.y)/2
+            }
+        }
+    }, 1000/60)
+
+    function redraw() {
+        resetCanvas()
+
+        for(var i=0; i < objects.length; i++) {
+            var o = objects[i]
+
+            drawCircle(o.origin.x, o.origin.y, o.radius, o.touching ? 0 : 100)
+        }
+
+        //setTimeout(redraw, 1000/20)
+        requestAnimationFrame(redraw)
+    }
+
+    redraw()
+
+</script>

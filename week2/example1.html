@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+</head>
+
+<body>
+<canvas id='canvas'></canvas>
+
+<script>
+
+    var canvas = document.getElementById('canvas');
+
+    canvas.width = 500;
+    canvas.height = 500;
+
+    var ctx = canvas.getContext('2d');
+    ctx.fillStyle = 'red';
+
+    var w = canvas.width, h = canvas.height;
+
+    var frame = 0;
+
+    var start = Date.now();
+
+    var circles = [];
+
+    for (var i=0; i < 100; i+=1){
+        circles.push({
+            coords: {
+                x: Math.random()*innerWidth|0,
+                y: Math.random()*innerHeight|0
+            },
+
+            velocity: {
+                x: 0,
+                y: 0.05
+            }
+        });
+    }
+
+    function drawCircle(x, y, r){
+        ctx.fillRect(x, y, r, r);
+    }
+
+    function clearCanvas(){
+        ctx.canvas.width = ctx.canvas.width;
+    }
+
+    function drawStuff(){
+        frame++;
+        var p;
+
+        for(p=0; p < circles.length; p++){
+            circles[p].coords.y += circles[p].coords.y * circles[p].velocity.y;
+        }
+
+        for(p=0; p < circles.length; p++){
+            drawCircle(circles[p].coords.x, circles[p].coords.y, 10);
+        }
+    }
+
+    function drawFrame(){
+        clearCanvas();
+        drawStuff();
+        requestAnimationFrame(drawFrame);
+    }
+
+    drawFrame();
+</script>
+
+</body>
+
+</html>
