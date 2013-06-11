@@ -53,6 +53,7 @@
             o.origin.x += o.velocity.x;
             o.origin.y += o.velocity.y;
 
+            //bounce
             if (o.origin.y > worldsize/2) {
                 o.origin.y = worldsize/2
                 o.velocity.y = -o.velocity.y*0.8;
