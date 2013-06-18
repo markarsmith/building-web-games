@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<style>
+    body {font-family:sans-serif;}
+    div {
+        position: absolute; top:-10px; left:-10px;
+        width:0; height:0;
+        border: 10px solid red;
+        border-radius: 10px;
+    }
+</style>
+<body>
+<script>
+    // let's identify users somehow
+    var name = sessionStorage.name = prompt("What is your name?", sessionStorage.name || 'Lazy' + (Math.random()*1000|0))
+
+    // connect to localhost port 9999 over ws protocol
+    var ws = new WebSocket('ws://localhost:9999')
+
+    // called when connection succeeds
+    ws.onopen = function(){
+        console.log("Connected")
+
+        // send name as soon as it connects
+        ws.send(JSON.stringify({name:name}))
+
+
+        window.onmousemove = function(e) {
+            ws.send(JSON.stringify({x:e.clientX,y:e.clientY}))
+        }
+
+        window.onk
+    }
+
+    // called whenever something is received
+    ws.onmessage = function(event){
+        // event.data contains TEXT that has been received
+        var data = JSON.parse(event.data)
+
+        var id = 'x' + data.id
+        var el = document.getElementById(id)
+
+        if (data.bye) {
+            console.log(data)
+            if (el) {
+                el.parentNode.removeChild(el)
+            }
+            return;
+        }
+
+        if (!el) {
+            el = document.createElement('div')
+            el.setAttribute('id', id)
+            document.body.appendChild(el)
+        }
+
+        if (data.name) {
+            console.log(data)
+            el.appendChild(document.createTextNode(data.name))
+        } else {
+            el.style.transform = 'translate('+data.x+'px,'+data.y+'px)'
+            el.style.webkitTransform = 'translate('+data.x+'px,'+data.y+'px)'
+        }
+    }
+
+</script>

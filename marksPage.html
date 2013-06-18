@@ -12,13 +12,79 @@
 
     var ctx = canvas.getContext('2d')
 
+    var globalX = 0;
+    var globalY = 0;
 
-    function drawBox(x,y,size,c) {
-        ctx.fillStyle = 'rgb('+(c*2)+',0,'+(255-c*2)+')'
-        ctx.fillRect(x-size/2, y-size/2, size, size);
+    var xPos = 0;
+    var yPos = 0;
+
+    function resetCanvas() {
+        canvas.width = canvas.width;
     }
 
+    function drawBoxOriginLeft(x, y, w, h) {
+        ctx.moveTo(x,y);
+        ctx.lineTo(x+w, y);
+        ctx.lineTo(x+w, y+h);
+        ctx.lineTo(x, y+h);
+        ctx.lineTo(x, y);
+    }
 
-    drawBox(0, 0, 100, 100)
+    function drawBoxOriginRight(x, y, w, h) {
+        ctx.moveTo(x,y);
+        ctx.lineTo(x-w, y);
+        ctx.lineTo(x-w, y+h);
+        ctx.lineTo(x, y+h);
+        ctx.lineTo(x, y);
+    }
+
+    function drawBoxOriginBottom(x, y, w, h) {
+        ctx.moveTo(x,y);
+        ctx.lineTo(x+w, y);
+        ctx.lineTo(x+w, y-h);
+        ctx.lineTo(x, y-h);
+        ctx.lineTo(x, y);
+    }
+
+    function drawBoxOriginTop(x, y, w, h) {
+        ctx.moveTo(x,y);
+        ctx.lineTo(x+w, y);
+        ctx.lineTo(x+w, y+h);
+        ctx.lineTo(x, y+h);
+        ctx.lineTo(x, y);
+    }
+
+    function drawBox(x,y,w,h,c) {
+        ctx.fillStyle = 'rgb('+(c*2)+',0,'+(255-c*2)+')'
+        //ctx.fillRect(x-w/2, y-h/2, w, h);
+        ctx.beginPath();
+        drawBoxOriginTop(x, y, w, h);
+        ctx.closePath();
+        ctx.fill()
+    }
+
+    function redraw() {
+        if (xPos == 100){
+            console.log('save')
+            ctx.save();
+            xPos+=1;
+        }
+        else{
+            //resetCanvas();
+            ctx.restore();
+        }
+
+
+        drawBox(globalX, globalY, 100, xPos, 100)
+        if(xPos<100){
+            xPos += 1;
+        }
+        else{
+            globalX = 100;
+        }
+        requestAnimationFrame(redraw)
+    }
+    redraw();
+
 
 </script>
