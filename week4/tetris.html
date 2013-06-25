@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+
+    <style>
+        canvas {outline:none}
+        canvas:focus {outline:2px solid #4bf}
+    </style>
+</head>
+<body>
+
+<canvas width="200" height="400"></canvas>
+<canvas width="100" height="200"></canvas>
+<canvas width="40" height="80"></canvas>
+
+<script>
+
+function Tetromino(blocks, x,y)
+{
+    this.x = x; this.y = y;
+    this.blocks = blocks;
+}
+
+Tetromino.prototype = {
+    x:null,
+    y:null,
+
+    rotated: function() {
+        var old_height = this.blocks.length;
+        var rotated = this.rotatedBlocks();
+        var new_height = rotated.length;
+
+        return new Tetromino(rotated, this.x, this.y - new_height + old_height);
+    },
+
+    rotatedBlocks: function() {
+        var w = this.blocks[0].length;
+        var h = this.blocks.length;
+
+        var rotated = new Array(w);
+        for(var i=0; i < h; i++) {
+            for(var j=0; j < w; j++) {
+                if (!rotated[w-1-j]) rotated[w-1-j] = []
+                rotated[w-1-j][i] = this.blocks[i][j];
+            }
+        }
+        return rotated;
+    },
+
+    blocks: null
+};
+
+Tetromino.tetrominos = [
+    [[0,0,0,0],
+        [1,1,1,1],
+        [0,0,0,0]],
+
+    [[0,0,0],
+        [2,2,2],
+        [0,0,2]],
+
+    [[0,0,0],
+        [3,3,3],
+        [3,0,0]],
+
+    [[4,4],
+        [4,4]],
+
+    [[0,5,5],
+        [5,5,0]],
+
+    [[0,0,0],
+        [6,6,6],
+        [0,6,0]],
+
+    [[7,7,0],
+        [0,7,7]],
+];
+
+Tetromino.getTetromino = function(num, rotation, x,y) {
+    var t = new Tetromino(Tetromino.tetrominos[num], x,y);
+    rotation = rotation%4;
+    for(var i=0; i < rotation; i++) {
+        t = t.rotated();
+    }
+    return t;
+};
+
+
+function TetrisGame()
+{
+    this.listeners = [];
+    this.initWell(10,20);
+    this.newTetromino();
+
+    var self=this;
+
+    setInterval(function(){self.drop()},500);
+}
+
+TetrisGame.prototype = {
+
+    listeners: null,//cos prototype shares values across all instances
+    well: null,
+    tetromino: null,
+
+    newTetromino: function() {
+        var t = Tetromino.getTetromino(Math.floor(Math.random()*6),0, Math.floor(Math.random()*(this.well.width-4)),0);
+        if (this.canPlaceInWell(t, t.x, t.y)) {
+            this.tetromino = t;
+        } else {
+            this.tetromino = null;
+        }
+    },
+
+    rotate: function() {
+        var old_t = this.tetromino;
+        var new_t = this.tetromino.rotated();
+        if (this.tryPlacingRotated(new_t, old_t, 0) ||
+                this.tryPlacingRotated(new_t, old_t, 1) ||
+                this.tryPlacingRotated(new_t, old_t, -1) ||
+                this.tryPlacingRotated(new_t, old_t, -2)) {
+
+            this.notifyWellChanged();
+        }
+    },
+
+    tryPlacingRotated: function(new_t, old_t, x) {
+        if (this.canPlaceInWell(new_t, new_t.x+x, new_t.y) && (!x || this.canPlaceInWell(old_t, old_t.x+x, old_t.y))) {
+            new_t.x += x;
+            this.tetromino = new_t;
+            return true;
+        }
+        return false;
+    },
+
+    move: function(direction) {
+        if (this.canPlaceInWell(this.tetromino, this.tetromino.x+direction, this.tetromino.y)) {
+            this.tetromino.x+=direction;
+            this.notifyWellChanged();
+        }
+    },
+
+    drop: function() {
+        if (this.canPlaceInWell(this.tetromino, this.tetromino.x, this.tetromino.y + 1)) {
+            this.tetromino.y+=1;
+            this.notifyWellChanged();
+        } else {
+            this.placeInWell(this.tetromino);
+            this.newTetromino()
+        }
+    },
+
+    addListener: function(callback) {
+        this.listeners.push(callback);
+    },
+
+    canPlaceInWell: function(tetromino,x,y) {
+        var blocks = tetromino.blocks;
+
+        for(var i=0; i < blocks.length; i++) {
+            for(var j=0; j < blocks[i].length; j++) {
+                if (!blocks[i][j]) continue;
+
+                // out of bounds
+                if (y+i < 0 || x+j < 0) return false;
+                if (y+i >= this.well.blocks.length) return false;
+                if (x+j >= this.well.blocks[y+i].length) return false;
+
+                // collision
+                if (this.well.blocks[y+i][x+j]) return false;
+            }
+        }
+        return true;
+    },
+
+    placeInWell: function(tetromino) {
+        var blocks = tetromino.blocks;
+        var x = tetromino.x, y = tetromino.y;
+
+        for(var i=0; i < blocks.length; i++) {
+            for(var j=0; j < blocks[i].length; j++) {
+                if (blocks[i][j]) this.well.blocks[y+i][x+j] = blocks[i][j];
+            }
+        }
+
+        this.clearWell();
+    },
+
+    clearWell: function() {
+        var blocks = this.well.blocks;
+        var write_y = blocks.length-1;
+        for(var read_y=write_y; read_y >= 0; read_y--) {
+
+            var full_line = true;
+            for(var x=0; x < blocks[read_y].length; x++) {
+                if (!blocks[read_y][x]) { full_line = false; break; }
+            }
+
+            blocks[write_y] = blocks[read_y];
+
+            if (!full_line) write_y--;
+        }
+
+        var width = blocks[0].length;
+        while(write_y >= 0) {
+            blocks[write_y] = [];
+            for(var x=0; x < width; x++) blocks[write_y][x]=0;
+            write_y--;
+        }
+    },
+
+    notifyWellChanged: function() {
+        this.listeners.forEach(function(listener){
+            listener();
+        });
+    },
+
+    initWell: function(w,h) {
+        this.well = {width:w, height:h, blocks:[]};
+
+        for(var i=0; i < h; i++) {
+            this.well.blocks[i] = []
+            for(var j=0; j < w; j++) {
+                this.well.blocks[i][j] = 0;
+            }
+        }
+    },
+
+    0:0};
+
+
+function TetrisView(canvas, game, background)
+{
+    this.blockSize = Math.min(canvas.width/game.well.width, canvas.height/game.well.height);
+    this.game = game;
+    if (background) {
+        this.wellColors = this.wellColors.slice()
+        this.wellColors[0] = background
+    }
+    this.ctx = canvas.getContext('2d');
+
+    var self = this;
+    canvas.addEventListener('keydown', function(e) {self.keyHandler(e);}, false);
+    canvas.addEventListener('focus', function(e) {self.focused = true; self.draw();}, false);
+    canvas.addEventListener('blur', function(e) {self.focused = false; self.draw();}, false);
+
+    //this.game.addListener(function(){self.draw()}); OR requestAnimationFrame see later
+
+    canvas.tabIndex=0;
+    canvas.focus();
+
+    this.draw();
+}
+
+TetrisView.prototype = {
+    ctx: null,
+    game: null,
+    focused: false,
+
+    key: {
+        UP: 38,
+        DOWN: 40,
+        LEFT: 37,
+        RIGHT: 39
+    },
+
+    keyHandler: function(e) {
+        switch(e.keyCode) {
+            case this.key.UP:
+                this.game.rotate();
+                break;
+            case this.key.LEFT:
+                this.game.move(-1);
+                break;
+            case this.key.RIGHT:
+                this.game.move(1);
+                break;
+            case this.key.DOWN:
+                this.game.drop();
+                break;
+            default:
+                return; // leave other keys alone
+        }
+
+        e.preventDefault();
+    },
+
+    wellColors: ['black', '#5555ff', '#ffa555', '#ffff55', '#55ff55', '#aa55ff', '#ff5555' ], //hence while tetronimo's are 0-6
+
+    draw: function() {
+        this.drawBlocks(this.game.well.blocks,0,0, false);
+        this.drawBlocks(this.game.tetromino.blocks, this.game.tetromino.x, this.game.tetromino.y, true);
+
+        requestAnimationFrame(this.draw.bind(this));
+    },
+
+    drawBlocks: function(blocks, x,y, skipzero) {
+        var blockSize=this.blockSize;
+
+        for(var i=0; i < blocks.length; i++) {
+            for(var j=0; j < blocks[i].length; j++) {
+                if (skipzero && !blocks[i][j]) continue;
+
+                this.ctx.fillStyle = this.wellColors[blocks[i][j]];
+                this.ctx.fillRect(blockSize*(x+j), blockSize*(y+i), blockSize-1, blockSize-1);
+            }
+        }
+    },
+
+    0:0};
+
+
+var game = new TetrisGame();
+var backgrounds = ['black', 'blue', 'white']
+
+var canvases = document.getElementsByTagName('canvas');
+for(var i=0; i< canvases.length; i++) {
+    new TetrisView(canvases[i], game, backgrounds[i]);
+}
+
+ var game2 = new TetrisGame();
+ var c2 = document.createElement('canvas');
+ c2.width = 300
+ c2.height = 500
+ document.body.appendChild(c2);
+
+ //new TetrisView(c2, game2, 'green');
+
+</script>
+
+</body>
+</html>

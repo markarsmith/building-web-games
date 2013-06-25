@@ -19,3 +19,13 @@ http://jsfiddle.net/QFGTt/
 http://fbs-stg.sta.bazaarvoice.com/html/photos/index.html
 http://www.vobarian.com/collisions/2dcollisions2.pdf
 http://acko.net/files/fullfrontal/fullfrontal/slides-net/
+
+week 3
+
+http://jsfiddle.net/EPeUG/6/
+
+week 4
+
+jsfiddle.net/VQpFB/2/
+jsfiddle.net/VQpFB/4/
+jsfiddle.net/Zrs5J

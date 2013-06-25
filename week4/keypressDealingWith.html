@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+
+    <style>
+
+        div { background-color: red; width: 100px; height: 100px; position: absolute; }
+
+    </style>
+</head>
+<body>
+
+<div id="me"></div>
+
+<script>
+    var div = document.getElementById('me');
+
+    var keys = {
+        A:  65,
+        W:  87,
+        D:  68,
+        S:  83,
+    };
+
+    var x = 50;
+    var y = 50;
+    div.style.left = x+'px';
+    div.style.top = y+'px';
+
+
+    var held = {};
+    document.body.onkeydown = function(e){
+        if (e.keyCode == keys.A) held.A = true;
+        if (e.keyCode == keys.D) held.D = true;
+        if (e.keyCode == keys.W) held.W = true;
+        if (e.keyCode == keys.S) held.S = true;
+    };
+
+    document.body.onkeyup = function(e){
+        if (e.keyCode == keys.A) held.A = false;
+        if (e.keyCode == keys.D) held.D = false;
+        if (e.keyCode == keys.W) held.W = false;
+        if (e.keyCode == keys.S) held.S = false;
+    };
+
+//    setInterval(function(){
+//        if (held.A) div.style.left = (--x)+'px';
+//        if (held.D) div.style.left = (++x)+'px';
+//        if (held.W) div.style.top = (--y)+'px';
+//        if (held.S) div.style.top = (++y)+'px';
+//    }, 200);
+
+    function drawFrame(){
+        if (held.A) div.style.left = (--x)+'px';
+        if (held.D) div.style.left = (++x)+'px';
+        if (held.W) div.style.top = (--y)+'px';
+        if (held.S) div.style.top = (++y)+'px';
+        requestAnimationFrame(drawFrame)
+    }
+
+    drawFrame();
+
+
+</script>
+
+</body>
+</html>
