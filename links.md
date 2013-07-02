@@ -32,3 +32,8 @@ jsfiddle.net/Zrs5J
 
 week 5
 
+http://pornel.net/gamejam/
+https://github.com/bgrins/javascript-astar
+http://www.briangrinstead.com/files/astar/
+http://pornel.net/gamejam/#soas
+https://github.com/pornel/Asteroids
